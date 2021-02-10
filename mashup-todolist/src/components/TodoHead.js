@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-
+import { useTodoState } from '../TodoContext'
 const TodoHeadBlock = styled.div`
   padding-top: 48px;
   padding-left: 32px;
@@ -26,6 +26,8 @@ const TodoHeadBlock = styled.div`
 `;
 
 function TodoHead() {
+  const todo = useTodoState()
+  console.log(30, todo)
   return (
       <>
         <TodoHeadBlock>
@@ -36,5 +38,4 @@ function TodoHead() {
       </>
   );
 }
-
 export default TodoHead;
