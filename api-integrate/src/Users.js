@@ -1,25 +1,48 @@
-import React, { useState, useEffect } from "react";
+import React, { useReducer, useEffect } from "react";
 import axios from "axios";
 
-export default function Users() {
-  const [users, setUsers] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+function reducer(state, action) {
+  switch (action.type) {
+    case "LOADING":
+      return {
+        loading: true,
+        data: null,
+        error: null,
+      };
+    case "SUCCESS":
+      return {
+        loading: false,
+        data: action.data,
+        error: null,
+      };
+    case "ERROR":
+      return {
+        loading: false,
+        data: null,
+        error: action.error,
+      };
+    default:
+      throw new Error(`Unhandled action type: ${action.type}`);
+  }
+}
 
+export default function Users() {
+  const [{ loading, data: users, error }, dispatch] = useReducer(reducer, {
+    loading: false,
+    data: null,
+    error: null,
+  });
   const fetchUsers = async () => {
     try {
-      setError(null);
-      setUsers(null);
-      setLoading(true);
+      dispatch({ type: "LOADING" });
 
       const response = await axios.get(
         "https://jsonplaceholder.typicode.com/users"
       );
-      setUsers(response.data);
+      dispatch({ type: "SUCCESS", data: response.data });
     } catch (error) {
-      setError(error);
+      dispatch({ type: "ERROR", error: error });
     }
-    setLoading(false);
   };
   useEffect(() => {
     fetchUsers();
