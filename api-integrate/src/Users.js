@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import useAsync from "./useAsync";
+import { useAsync } from "react-async";
 import User from "./User";
 
 const getUsers = async () => {
@@ -11,15 +11,13 @@ const getUsers = async () => {
 };
 export default function Users() {
   const [userId, setUserId] = useState(null);
-  const [{ loading, data: users, error }, refetch] = useAsync(
-    getUsers,
-    [],
-    true
-  );
+  const { isLoading, data: users, error, run } = useAsync({
+    deferFn: getUsers,
+  });
 
-  if (loading) return <div>loading...</div>;
+  if (isLoading) return <div>loading...</div>;
   if (error) return <div> error ocuur</div>;
-  if (!users) return <button onClick={refetch}>다시 불러오기</button>;
+  if (!users) return <button onClick={run}>다시 불러오기</button>;
   return (
     <>
       <ul>
@@ -33,7 +31,7 @@ export default function Users() {
           </li>
         ))}
       </ul>
-      <button onClick={refetch}>다시 불러오기</button>
+      <button onClick={run}>다시 불러오기</button>
       {userId && <User id={userId} />}
     </>
   );
