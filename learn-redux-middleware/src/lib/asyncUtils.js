@@ -29,23 +29,24 @@ export const reducerUtils = {
         data: payload,
         error: null
     }),
-    error: error => ({
+    error: payload => ({
         loading: false,
-        data: error,
+        data: payload,
         error: true
     })
 }
 
 // 비동기 관련 액션들을 처리하는 리듀서를 만들어줍니다.
 // type 은 액션의 타입, key 는 상태의 key (예: posts, post) 입니다.
-export const handleAsyncActions = (type, key) => {
+export const handleAsyncActions = (type, key, keepData = false) => {
     const [SUCCESS, ERROR] = [`${type}_SUCCESS`, `${type}_ERROR`];
     return (state, action) => {
+        console.log(45, state);
         switch (action.type) {
             case type:
                 return {
                     ...state,
-                    posts: reducerUtils.loading()
+                    [key]: reducerUtils.loading(keepData ? state[key].data : null)
                 }
             case SUCCESS:
                 return {
