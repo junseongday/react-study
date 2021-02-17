@@ -63,3 +63,56 @@ export const handleAsyncActions = (type, key, keepData = false) => {
         }
     }
 }
+
+// 특정 id를 처리하는 Thunk 생성함수(param === id)
+const defaultIdSelector = param => param
+export const createPromiseThunkById = (type, promiseCreator, idSelector = defaultIdSelector) => {
+    const [SUCCESS, ERROR] = [`${type}_SUCCESS`, `${type}_ERROR`];
+    return param => async dispatch => {
+        const id = idSelector(param);
+        dispatch({ type, meta: id });
+        try {
+            const payload = await promiseCreator(param);
+            dispatch({ type: SUCCESS, payload, meta: id })
+        } catch (error) {
+            dispatch({ type: ERROR, payload: error, ERROR: true, meta: id })
+        }
+    }
+}
+
+// id 별로 처리 하는 유틸함수
+export const handleAsyncActionsById = (type, key, keepData = false) => {
+    const [SUCCESS, ERROR] = [`${type}_SUCCESS`, `${type}_ERROR`];
+    console.log(86, '@@@@@@@@', type, key, keepData)
+    return (state, action) => {
+        const id = action.meta
+        switch (action.type) {
+            case type:
+                return {
+                    ...state,
+                    [key]: {
+                        ...state[key],
+                        [id]: reducerUtils.loading(keepData ? state[key][id] &&state[key][id].data : null)
+                    }
+                }
+            case SUCCESS:
+                return {
+                    ...state,
+                    [key]: {
+                        ...state[key],
+                        [id]: reducerUtils.success(action.payload)
+                    }
+                }
+            case ERROR:
+                return {
+                    ...state,
+                    [key]: {
+                        ...state[key],
+                        [id]: reducerUtils.error(action.payload)
+                    }                    
+                }
+            default:
+                return state;
+        }
+    }
+}

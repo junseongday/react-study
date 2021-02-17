@@ -1,19 +1,17 @@
 import React, { useEffect } from 'react';
 import {useDispatch, useSelector} from 'react-redux'
 import Post from '../components/Post';
+import { reducerUtils } from '../lib/asyncUtils';
 import { clearPost, getPost } from '../modules/posts';
 
 function PostContainer({postId}) {
-    const {data, error, loading} = useSelector(state => state.posts.post);
-    console.log(8, data)
+    const {data, error, loading} = useSelector(state => state.posts.post[postId]) || reducerUtils.initial();
+
     const dispatch = useDispatch();
     useEffect(()=>{
+        if (data) return
         dispatch(getPost(postId))
-        return () => {
-          console.log(12, 'clearpost')
-          dispatch(clearPost())
-        }
-    }, [postId, dispatch]);
+    }, [data, postId, dispatch]);
     if (loading) return <div>loading...</div>
     if (error) return <div>error occur</div>
     if (!data) return null;    

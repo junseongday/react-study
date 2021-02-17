@@ -1,5 +1,5 @@
 import * as postsAPI from '../api/posts'
-import { createPromiseThunk, handleAsyncActions, reducerUtils } from '../lib/asyncUtils';
+import { createPromiseThunk, createPromiseThunkById, handleAsyncActions, handleAsyncActionsById, reducerUtils } from '../lib/asyncUtils';
 
 const GET_POSTS = 'GET_POSTS';
 const GET_POSTS_SUCCESS = 'GET_POSTS_SUCCESS';
@@ -14,13 +14,13 @@ const CLEAR_POST = 'CLEAR_POST';
 
 // thunk => action funct
 export const getPosts = createPromiseThunk(GET_POSTS, postsAPI.getPosts)
-export const getPost = createPromiseThunk(GET_POST, postsAPI.getPostById)
+export const getPost = createPromiseThunkById(GET_POST, postsAPI.getPostById)
 
 export const clearPost = () => ({ type: CLEAR_POST });
 
 const initialState = {
     posts: reducerUtils.initial(),
-    post: reducerUtils.initial(),
+    post: {},
 }
 
 export default function posts(state=initialState, action) {
@@ -32,7 +32,7 @@ export default function posts(state=initialState, action) {
         case GET_POST:
         case GET_POST_SUCCESS:
         case GET_POST_ERROR:
-            return handleAsyncActions(GET_POST, 'post')(state, action);
+            return handleAsyncActionsById(GET_POST, 'post')(state, action);
         case CLEAR_POST:
             return ({
                 ...state,
