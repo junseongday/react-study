@@ -1,4 +1,4 @@
-import { call, put, takeEvery } from 'redux-saga/effects';
+import { call, getContext, put, takeEvery } from 'redux-saga/effects';
 import * as postsAPI from '../api/posts'
 import { createPromiseSaga, createPromiseSagaById, handleAsyncActions, handleAsyncActionsById, reducerUtils } from '../lib/asyncUtils';
 
@@ -12,6 +12,7 @@ const GET_POST_ERROR = 'GET_POST_ERROR';
 
 // 포스트 비우기
 const CLEAR_POST = 'CLEAR_POST';
+const GO_TO_HOME = 'GO_TO_HOME';
 
 // thunk => action funct
 // export const getPosts = createPromiseThunk(GET_POSTS, postsAPI.getPosts)
@@ -20,6 +21,7 @@ const CLEAR_POST = 'CLEAR_POST';
 export const getPosts = () => ({ type: GET_POSTS });
 // payload는 파라미터 용도, meta는 리듀서에서 id를 알기위한 용도
 export const getPost = id => ({ type: GET_POST, payload: id, meta: id });
+export const goToHome = () => ({ type: GO_TO_HOME });
 
 const initialState = {
     posts: reducerUtils.initial(),
@@ -54,8 +56,15 @@ export const goHome = () => (dispatch, getState, {history}) => {
 const getPostsSaga = createPromiseSaga(GET_POSTS, postsAPI.getPosts);
 const getPostSaga = createPromiseSagaById(GET_POST, postsAPI.getPostById);
 
+function* goToHomeSaga() {
+    console.log(60, '@@@@@@@@###')
+  const history = yield getContext('history');
+  history.push('/');
+}
+
 // 사가들을 합치기
 export function* postsSaga() {
   yield takeEvery(GET_POSTS, getPostsSaga);
   yield takeEvery(GET_POST, getPostSaga);
+  yield takeEvery(GO_TO_HOME, goToHomeSaga);
 }

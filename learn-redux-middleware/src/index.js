@@ -14,9 +14,21 @@ import {createBrowserHistory} from 'history';
 import createSagaMiddleware from 'redux-saga';
 
 const history = createBrowserHistory();
-const sagaMiddleware = createSagaMiddleware(); // 사가 미들웨어를 만듭니다.
+const sagaMiddleware = createSagaMiddleware({
+  context: {
+    history
+  }
+}); // 사가 미들웨어를 만듭니다.
 
-const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(ReduxThunk.withExtraArgument({history}), sagaMiddleware, logger)));
+const store = createStore(
+  rootReducer, 
+  composeWithDevTools(
+    applyMiddleware(
+      ReduxThunk.withExtraArgument({
+        history
+      }), sagaMiddleware, logger)
+  )
+);
 
 sagaMiddleware.run(rootSaga); // 루트 사가를 실행해줍니다.
 
