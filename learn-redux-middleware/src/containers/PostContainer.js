@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import {useDispatch, useSelector} from 'react-redux'
 import Post from '../components/Post';
 import { reducerUtils } from '../lib/asyncUtils';
-import { clearPost, getPost } from '../modules/posts';
+import { getPost, goHome } from '../modules/posts';
 
 function PostContainer({postId}) {
     const {data, error, loading} = useSelector(state => state.posts.post[postId]) || reducerUtils.initial();
@@ -16,7 +16,10 @@ function PostContainer({postId}) {
     if (!data) return null;    
 
   return (
-    <Post post={data}/>
+    <>
+      <button onClick={() => dispatch(goHome())}>홈으로 이동</button>
+      <Post post={data}/>
+    </>
   );
 }
 

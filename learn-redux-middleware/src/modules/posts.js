@@ -42,3 +42,7 @@ export default function posts(state=initialState, action) {
             return state;
     }
 }
+
+export const goHome = () => (dispatch, getState, {history}) => {
+    history.push('/')
+}
