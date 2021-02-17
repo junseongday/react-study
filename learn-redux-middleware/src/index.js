@@ -5,15 +5,20 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { createStore, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux'
-import rootReducer from './modules'
+import rootReducer, { rootSaga } from './modules'
 import logger from 'redux-logger';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import ReduxThunk from 'redux-thunk';
 import {Router} from 'react-router-dom';
 import {createBrowserHistory} from 'history';
+import createSagaMiddleware from 'redux-saga';
 
 const history = createBrowserHistory();
-const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(ReduxThunk.withExtraArgument({history}), logger)));
+const sagaMiddleware = createSagaMiddleware(); // 사가 미들웨어를 만듭니다.
+
+const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(ReduxThunk.withExtraArgument({history}), sagaMiddleware, logger)));
+
+sagaMiddleware.run(rootSaga); // 루트 사가를 실행해줍니다.
 
 ReactDOM.render(
   <Router history={history}>
