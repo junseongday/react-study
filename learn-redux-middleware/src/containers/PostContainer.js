@@ -9,10 +9,9 @@ function PostContainer({postId}) {
 
     const dispatch = useDispatch();
     useEffect(()=>{
-        if (data) return
         dispatch(getPost(postId))
-    }, [data, postId, dispatch]);
-    if (loading) return <div>loading...</div>
+    }, [postId, dispatch]);
+    if (loading && !data) return <div>loading...</div>
     if (error) return <div>error occur</div>
     if (!data) return null;    
 
